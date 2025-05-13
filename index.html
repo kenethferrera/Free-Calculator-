@@ -2,52 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-commerce Fee Calculator</title>
+  <title>Wall Sheet Decor Profit Calculator</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
-    label, select, input { display: block; margin-top: 1rem; width: 100%; padding: 0.5rem; }
-    button { margin-top: 1.5rem; padding: 0.5rem 1rem; font-size: 1rem; }
-    .result { margin-top: 2rem; font-weight: bold; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    label, input, button {
+      display: block;
+      margin: 10px 0;
+    }
+    input {
+      padding: 8px;
+      width: 200px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <h1>E-commerce Fee Calculator</h1>
+  <h1>Wall Sheet Decor Profit Calculator</h1>
 
-  <label for="platform">Select Platform:</label>
+  <label for="price">Selling Price (₱):</label>
+  <input type="number" id="price" placeholder="e.g. 500">
+
+  <label for="cost">Cost per Item (₱):</label>
+  <input type="number" id="cost" placeholder="e.g. 250">
+
+  <label for="platform">Choose Platform:</label>
   <select id="platform">
-    <option value="shopee">Shopee</option>
-    <option value="tiktok">TikTok</option>
+    <option value="shopee">Shopee (12% + 1.5%)</option>
+    <option value="tiktok">TikTok Shop (2% + 1.5%)</option>
   </select>
 
-  <label for="price">Enter Product Price (₱):</label>
-  <input type="number" id="price" placeholder="e.g., 500" />
+  <button onclick="calculateEarnings()">Calculate</button>
 
-  <label for="feeRate">Enter Estimated Fee Rate (%):</label>
-  <input type="number" id="feeRate" placeholder="e.g., 4 for 4%" step="0.1" />
-
-  <button onclick="calculateFee()">Calculate</button>
-
-  <div class="result" id="result"></div>
+  <p id="result"></p>
 
   <script>
-    function calculateFee() {
-      const platform = document.getElementById('platform').value;
+    function calculateEarnings() {
       const price = parseFloat(document.getElementById('price').value);
-      let feeRate = parseFloat(document.getElementById('feeRate').value);
+      const cost = parseFloat(document.getElementById('cost').value);
+      const platform = document.getElementById('platform').value;
 
-      if (!feeRate) {
-        feeRate = platform === 'shopee' ? 4 : 5;
+      if (isNaN(price) || isNaN(cost)) {
+        document.getElementById('result').innerText = 'Please enter valid numbers.';
+        return;
       }
 
-      const fee = (feeRate / 100) * price;
-      const earnings = price - fee;
+      let feeRate = 0;
+      if (platform === 'shopee') {
+        feeRate = 0.135; // 12% + 1.5%
+      } else if (platform === 'tiktok') {
+        feeRate = 0.035; // 2% + 1.5%
+      }
 
-      document.getElementById('result').innerHTML = `
-        <p>Estimated Platform Fee: ₱${fee.toFixed(2)}</p>
-        <p>Net Earnings: ₱${earnings.toFixed(2)}</p>
-      `;
+      const platformFee = price * feeRate;
+      const earnings = price - platformFee - cost;
+
+      document.getElementById('result').innerText =
+        `Net Earnings: ₱${earnings.toFixed(2)} (Platform Fee: ₱${platformFee.toFixed(2)})`;
     }
-  </script> src="https://app.aminos.ai/js/chat_plugin.js" data-bot-id="48534"></script>
+  </script>
+
+  <!-- ✅ Aminos Chatbot Script -->
+  <script src="https://app.aminos.ai/js/chat_plugin.js" data-bot-id="48534"></script>
 </body>
 </html>
