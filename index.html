@@ -1,76 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Wall Sheet Decor Profit Calculator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-    }
-    label, input, button {
-      display: block;
-      margin: 10px 0;
-    }
-    input {
-      padding: 8px;
-      width: 200px;
-    }
-    button {
-      padding: 10px 15px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <h1>Wall Sheet Decor Profit Calculator</h1>
+<section class="max-w-3xl mx-auto p-6">
+  <h2 class="text-3xl font-bold mb-6 text-center">💡 Frequently Asked Questions</h2>
 
-  <label for="price">Selling Price (₱):</label>
-  <input type="number" id="price" placeholder="e.g. 500">
+  <div class="space-y-6">
+    <!-- WIN -->
+    <div>
+      <h3 class="text-xl font-semibold">💰 What happens if I win a game?</h3>
+      <p class="text-gray-700">You receive the payout listed for your tier (e.g., $10, $20, or $30) directly into your wallet. Payouts apply to Tiers 1–3 only.</p>
+    </div>
 
-  <label for="cost">Cost per Item (₱):</label>
-  <input type="number" id="cost" placeholder="e.g. 250">
+    <!-- DRAW -->
+    <div>
+      <h3 class="text-xl font-semibold">🔄 What happens if I draw a game?</h3>
+      <p class="text-gray-700 mb-2">You’ll get <strong>1 game credit refunded</strong>, based on how you originally played the match:</p>
+      <ul class="list-disc list-inside text-gray-700">
+        <li><strong>Paid Credit:</strong> Refund is reusable or cashable.</li>
+        <li><strong>Ad-Earned Credit:</strong> Refund can only be reused for playing.</li>
+        <li><strong>Brutal Tier:</strong> No refunds (free tier).</li>
+      </ul>
+    </div>
 
-  <label for="platform">Choose Platform:</label>
-  <select id="platform">
-    <option value="shopee">Shopee (12% + 1.5%)</option>
-    <option value="tiktok">TikTok Shop (2% + 1.5%)</option>
-  </select>
+    <!-- CASHOUT -->
+    <div>
+      <h3 class="text-xl font-semibold">🤑 Can I cash out refunded credits?</h3>
+      <p class="text-gray-700">
+        <strong>Yes</strong>, if they were from <span class="font-semibold">paid games</span>.<br>
+        <strong>No</strong>, if from <span class="font-semibold">ad-earned games</span> — they’re play-only.
+      </p>
+    </div>
 
-  <button onclick="calculateEarnings()">Calculate</button>
+    <!-- CREDIT TYPES -->
+    <div>
+      <h3 class="text-xl font-semibold">🎯 What’s the difference between paid and ad-earned credits?</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse mt-2">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="py-2 px-4">Type</th>
+              <th class="py-2 px-4">Cost</th>
+              <th class="py-2 px-4">Refundable for Cash?</th>
+              <th class="py-2 px-4">Usable for Gameplay?</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-700">
+            <tr>
+              <td class="py-2 px-4 font-medium">💳 Paid Credit</td>
+              <td class="py-2 px-4">$0.20</td>
+              <td class="py-2 px-4">✅ Yes</td>
+              <td class="py-2 px-4">✅ Yes</td>
+            </tr>
+            <tr class="bg-gray-50">
+              <td class="py-2 px-4 font-medium">📺 Ad Credit</td>
+              <td class="py-2 px-4">Watch 1 ad</td>
+              <td class="py-2 px-4">❌ No</td>
+              <td class="py-2 px-4">✅ Yes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-  <p id="result"></p>
+    <!-- AD LIMITS -->
+    <div>
+      <h3 class="text-xl font-semibold">🔁 Can I play unlimited games using ads?</h3>
+      <ul class="list-disc list-inside text-gray-700">
+        <li>⏳ 1 ad = 1 credit every 30 minutes</li>
+        <li>📅 Max 5 ads per day</li>
+        <li>🚫 Max 2 ad-earned games in a row (then you must play 1 paid game)</li>
+      </ul>
+    </div>
 
-  <script>
-    function calculateEarnings() {
-      const price = parseFloat(document.getElementById('price').value);
-      const cost = parseFloat(document.getElementById('cost').value);
-      const platform = document.getElementById('platform').value;
+    <!-- LOSS -->
+    <div>
+      <h3 class="text-xl font-semibold">📉 What happens if I lose?</h3>
+      <p class="text-gray-700">No payout and no refund.</p>
+    </div>
 
-      if (isNaN(price) || isNaN(cost)) {
-        document.getElementById('result').innerText = 'Please enter valid numbers.';
-        return;
-      }
-
-      let feeRate = 0;
-      if (platform === 'shopee') {
-        feeRate = 0.135; // 12% + 1.5%
-      } else if (platform === 'tiktok') {
-        feeRate = 0.035; // 2% + 1.5%
-      }
-
-      const platformFee = price * feeRate;
-      const earnings = price - platformFee - cost;
-
-      document.getElementById('result').innerText =
-        `Net Earnings: ₱${earnings.toFixed(2)} (Platform Fee: ₱${platformFee.toFixed(2)})`;
-    }
-  </script>
-
-  <!-- ✅ Aminos Chatbot Script -->
-  <script src="https://app.aminos.ai/js/chat_plugin.js" data-bot-id="48534"></script>
-</body>
-</html>
+    <!-- DASHBOARD -->
+    <div>
+      <h3 class="text-xl font-semibold">📊 Can I track my stats and credits?</h3>
+      <p class="text-gray-700">Yes! Your dashboard shows:</p>
+      <ul class="list-disc list-inside text-gray-700">
+        <li>Total games played (by tier)</li>
+        <li>Win/Draw/Loss record</li>
+        <li>Wallet balance & earnings</li>
+        <li>Paid vs ad-earned credits</li>
+        <li>Ad usage history</li>
+      </ul>
+    </div>
+  </div>
+</section>
