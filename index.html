@@ -71,10 +71,14 @@
   <a href="#" onclick="history.back(); return false;" class="back-btn">← Back</a>
   <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
   <div class="container">
-    <h2>BuyTime Calculator</h2>
-    <label>Daily Salary (for 8 hours):</label>
-    <input type="number" id="dailySalary" placeholder="e.g. 810"><label>Overtime Pay (Optional):</label>
+    <h2>BuyTime Calculator</h2><label>Daily Salary (for 8 hours):</label>
+<input type="number" id="dailySalary" placeholder="e.g. 810">
+
+<label>Overtime Pay (Optional):</label>
 <input type="number" id="overtimePay" placeholder="e.g. 200">
+
+<label>Daily Budget (for essentials, bills, etc):</label>
+<input type="number" id="dailyBudget" placeholder="e.g. 400">
 
 <label>Item Name:</label>
 <input type="text" id="itemName" placeholder="e.g. Headphones">
@@ -91,11 +95,28 @@
   <tbody></tbody>
 </table>
 
+<h3>Daily Expenses</h3>
+<label>Expense Name:</label>
+<input type="text" id="expenseName" placeholder="e.g. Food">
+
+<label>Expense Amount:</label>
+<input type="number" id="expenseAmount" placeholder="e.g. 150">
+
+<button onclick="addExpense()">Add Expense</button>
+
+<table id="expenseTable" style="display:none;">
+  <thead>
+    <tr><th>Expense</th><th>Amount</th><th>Remove</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
 <button onclick="calculateTotal()">Calculate Time Needed</button>
 <div id="result"></div>
 
   </div>  <script>
     const items = [];
+    const expenses = [];
 
     function toggleDarkMode() {
       document.body.classList.toggle('dark-mode');
@@ -108,10 +129,10 @@
       items.push({ name, price });
       document.getElementById('itemName').value = '';
       document.getElementById('itemPrice').value = '';
-      updateTable();
+      updateItemTable();
     }
 
-    function updateTable() {
+    function updateItemTable() {
       const tbody = document.querySelector('#itemTable tbody');
       tbody.innerHTML = '';
       items.forEach((item, i) => {
@@ -124,21 +145,53 @@
 
     function removeItem(index) {
       items.splice(index, 1);
-      updateTable();
+      updateItemTable();
+    }
+
+    function addExpense() {
+      const name = document.getElementById('expenseName').value;
+      const amount = parseFloat(document.getElementById('expenseAmount').value);
+      if (!name || isNaN(amount)) return alert('Enter valid expense name and amount.');
+      expenses.push({ name, amount });
+      document.getElementById('expenseName').value = '';
+      document.getElementById('expenseAmount').value = '';
+      updateExpenseTable();
+    }
+
+    function updateExpenseTable() {
+      const tbody = document.querySelector('#expenseTable tbody');
+      tbody.innerHTML = '';
+      expenses.forEach((expense, i) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${expense.name}</td><td>₱${expense.amount}</td><td><button onclick="removeExpense(${i})">X</button></td>`;
+        tbody.appendChild(row);
+      });
+      document.getElementById('expenseTable').style.display = expenses.length ? 'table' : 'none';
+    }
+
+    function removeExpense(index) {
+      expenses.splice(index, 1);
+      updateExpenseTable();
     }
 
     function calculateTotal() {
       const dailySalary = parseFloat(document.getElementById('dailySalary').value);
       const overtimePay = parseFloat(document.getElementById('overtimePay').value) || 0;
+
       if (isNaN(dailySalary) || dailySalary <= 0) return alert('Enter valid daily salary.');
       if (items.length === 0) return alert('Add at least one item.');
 
+      const dailyExpenseTotal = expenses.reduce((sum, e) => sum + e.amount, 0);
       const totalCost = items.reduce((sum, item) => sum + item.price, 0);
-      const totalEarnPerDay = dailySalary + overtimePay;
-      const totalHoursPerDay = 8;
+      const totalIncome = dailySalary + overtimePay;
+      const netAvailable = totalIncome - dailyExpenseTotal;
 
-      const daysNeeded = totalCost / totalEarnPerDay;
+      if (netAvailable <= 0) return alert('Expenses exceed or equal income. Cannot save.');
+
+      const totalHoursPerDay = 8;
+      const daysNeeded = totalCost / netAvailable;
       const totalSeconds = Math.floor(daysNeeded * totalHoursPerDay * 3600);
+
       const days = Math.floor(totalSeconds / (3600 * totalHoursPerDay));
       const hours = Math.floor((totalSeconds % (3600 * totalHoursPerDay)) / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -146,6 +199,8 @@
 
       document.getElementById('result').innerHTML = `
         <p>Total Cost: ₱${totalCost.toFixed(2)}</p>
+        <p>Total Daily Expenses: ₱${dailyExpenseTotal.toFixed(2)}</p>
+        <p>Net Daily Savings: ₱${netAvailable.toFixed(2)}</p>
         <p>Time Needed to Afford: <strong>${days} days, ${hours} hrs, ${minutes} mins, ${seconds} secs</strong></p>
       `;
     }
