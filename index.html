@@ -1,199 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BuyTime Calculator + Budget Helper</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background-color: #f4f4f4;
-      color: #333;
-    }
-    .container {
-      max-width: 500px;
-      margin: 30px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    h2, h3 {
-      text-align: center;
-    }
-    input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0 15px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #333;
-      color: #fff;
-      border: none;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: #555;
-    }
-    #result, #budgetResult {
-      margin-top: 20px;
-      text-align: center;
-      font-weight: bold;
-      color: #222;
-    }
-    .hidden {
-      display: none;
-    }
-    .btn-group {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-    }
-    .btn-group button {
-      width: 48%;
-      padding: 12px;
-    }
-    label.note {
-      font-size: 12px;
-      color: #888;
-      margin-top: -10px;
-      display: block;
-      margin-bottom: 10px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BuyTime Calculator + Budgeting Suite</title>
+<style>
+  :root {
+    --bg-light: #f4f4f4;
+    --bg-dark: #121212;
+    --text-light: #333;
+    --text-dark: #eee;
+    --accent: #333;
+    --accent-dark: #ddd;
+    --green: #2e7d32;
+    --red: #c62828;
+  }
+  body {
+    margin: 0; font-family: sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    transition: background-color 0.3s, color 0.3s;
+  }
+  body.dark {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+  }
+  .container {
+    max-width: 600px;
+    margin: 30px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  body.dark .container {
+    background: #222;
+    color: var(--text-dark);
+  }
+  h2, h3 {
+    text-align: center;
+  }
+  input[type="number"], input[type="text"] {
+    width: 100%; padding: 10px; margin: 8px 0 15px 0;
+    border: 1px solid #ccc; border-radius: 5px; font-size: 16px;
+    box-sizing: border-box;
+  }
+  body.dark input[type="number"], body.dark input[type="text"] {
+    background: #333; color: #eee; border: 1px solid #555;
+  }
+  button {
+    width: 100%; padding: 12px; background: var(--accent);
+    color: #fff; border: none; font-size: 16px;
+    border-radius: 5px; cursor: pointer; margin-top: 10px;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background: #555;
+  }
+  #result, #budgetResult, #tips {
+    margin-top: 20px; font-weight: bold; text-align: center;
+  }
+  .hidden { display: none; }
+  .btn-group {
+    display: flex; justify-content: space-around; margin: 20px 0;
+  }
+  .btn-group button {
+    width: 48%; padding: 12px;
+  }
+  label.note {
+    font-size: 12px; color: #888; margin-top: -10px;
+    display: block; margin-bottom: 10px;
+  }
+  table {
+    width: 100%; border-collapse: collapse; margin-top: 15px;
+  }
+  th, td {
+    border: 1px solid #ccc; padding: 8px; text-align: left;
+  }
+  body.dark th, body.dark td {
+    border-color: #555;
+  }
+  #darkModeToggle {
+    position: fixed; top: 10px; right: 10px;
+    background: var(--accent); padding: 8px 12px;
+    border-radius: 5px; font-size: 14px;
+  }
+  #darkModeToggle:hover {
+    background: #555;
+  }
+  /* Progress bar */
+  .progress-bar {
+    display: flex; height: 25px; border-radius: 5px; overflow: hidden;
+    background: #eee;
+    margin-top: 15px;
+  }
+  .progress-segment {
+    height: 100%;
+    color: #fff;
+    font-size: 14px;
+    line-height: 25px;
+    padding-left: 5px;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+  .progress-essentials { background: #c62828; }
+  .progress-savings { background: #2e7d32; }
+  .progress-wants { background: #1565c0; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>BuyTime Calculator + Budget Helper</h2>
+<button id="darkModeToggle">Toggle Dark Mode</button>
 
-    <!-- Step 1: Budget question -->
-    <div id="budgetQuestion">
-      <p><strong>Before you buy, have you already set aside money for your needs, savings, and emergencies?</strong></p>
-      <div class="btn-group">
-        <button id="btnYes">✔ Yes, I have a budget</button>
-        <button id="btnNo">❌ No, I just want to check</button>
-      </div>
-    </div>
+<div class="container">
+  <h2>BuyTime Calculator + Budgeting Suite</h2>
 
-    <!-- Step 2b: Budget form -->
-    <div id="budgetForm" class="hidden">
-      <h3>Budget Helper</h3>
-      <label>Monthly Income:</label>
-      <input type="number" id="monthlyIncome" placeholder="Enter your monthly income" />
-      <label>Monthly Essentials (rent, food, bills):</label>
-      <input type="number" id="monthlyEssentials" placeholder="Enter total monthly essentials" />
-      <label>Target Savings (₱):</label>
-      <input type="number" id="targetSavings" placeholder="Enter target monthly savings" />
-      <label>
-        <input type="checkbox" id="emergencyFund" />
-        I have an emergency fund
-      </label>
-      <button id="btnCalcBudget">Calculate Budget</button>
-      <div id="budgetResult"></div>
-    </div>
-
-    <!-- Step 2a: BuyTime calculator -->
-    <div id="calculator" class="hidden">
-      <label>Daily Salary (8 hrs work):</label>
-      <input type="number" id="daily" placeholder="Enter daily salary" value="500" />
-      <label>Overtime Pay (Optional):</label>
-      <input type="number" id="ot" placeholder="Enter total OT pay (optional)" />
-      <label>Item Price:</label>
-      <input type="number" id="price" placeholder="Enter item price" />
-      <button id="btnCalculate">Calculate Time to Afford</button>
-      <div id="result"></div>
+  <!-- Step 1: Budget question -->
+  <div id="budgetQuestion">
+    <p><strong>Before you buy, have you set aside money for needs, savings, and emergencies?</strong></p>
+    <div class="btn-group">
+      <button id="btnYes">✔ Yes, I have a budget</button>
+      <button id="btnNo">❌ No, I want help budgeting</button>
     </div>
   </div>
 
-  <script>
+  <!-- Step 2b: Budget form -->
+  <div id="budgetForm" class="hidden">
+    <h3>Budget Helper</h3>
+    <label>Monthly Income:</label>
+    <input type="number" id="monthlyIncome" placeholder="Enter your monthly income" />
+    <label>Monthly Essentials (rent, food, bills):</label>
+    <input type="number" id="monthlyEssentials" placeholder="Enter total monthly essentials" />
+    <label>Target Savings (₱):</label>
+    <input type="number" id="targetSavings" placeholder="Enter target monthly savings" />
+    <label><input type="checkbox" id="emergencyFund" /> I have an emergency fund</label>
+    <button id="btnCalcBudget">Calculate Budget</button>
+    <div id="budgetResult"></div>
+
+    <div class="progress-bar hidden" id="budgetProgress">
+      <div class="progress-segment progress-essentials" id="progEssentials">Essentials 0%</div>
+      <div class="progress-segment progress-savings" id="progSavings">Savings 0%</div>
+      <div class="progress-segment progress-wants" id="progWants">Wants 0%</div>
+    </div>
+  </div>
+
+  <!-- Step 2a & 3: BuyTime calculator + multiple items -->
+  <div id="calculator" class="hidden">
+    <h3>Items to Buy</h3>
+    <div>
+      <label>Item Name:</label>
+      <input type="text" id="itemName" placeholder="Name of item" />
+      <label>Item Price (₱):</label>
+      <input type="number" id="itemPrice" placeholder="Price of item" />
+      <button id="btnAddItem">Add Item</button>
+    </div>
+
+    <table id="itemTable" class="hidden" aria-label="Items to buy">
+      <thead>
+        <tr><th>Item</th><th>Price (₱)</th><th>Remove</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <hr>
+
+    <label>Daily Salary (8 hrs work):</label>
+    <input type="number" id="daily" placeholder="Enter daily salary" />
+    <label>Overtime Pay (₱) (Optional):</label>
+    <input type="number" id="ot" placeholder="Enter total OT pay (optional)" />
+    <label>Work hours per day:</label>
+    <input type="number" id="workHours" placeholder="Default 8" min="1" max="24" value="8" />
+    <button id="btnCalculate">Calculate Total Time to Afford</button>
+    <div id="result"></div>
+  </div>
+
+  <div id="tips" class="hidden"></div>
+
+  <button id="btnExportPDF" class="hidden" style="margin-top:20px;">Export Result as PDF</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  (() => {
     const budgetQuestion = document.getElementById('budgetQuestion');
     const budgetForm = document.getElementById('budgetForm');
     const calculator = document.getElementById('calculator');
     const budgetResult = document.getElementById('budgetResult');
     const result = document.getElementById('result');
+    const tips = document.getElementById('tips');
+    const itemNameInput = document.getElementById('itemName');
+    const itemPriceInput = document.getElementById('itemPrice');
+    const itemTable = document.getElementById('itemTable');
+    const itemTableBody = itemTable.querySelector('tbody');
+    const btnExportPDF = document.getElementById('btnExportPDF');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const progEssentials = document.getElementById('progEssentials');
+    const progSavings = document.getElementById('progSavings');
+    const progWants = document.getElementById('progWants');
+    const budgetProgress = document.getElementById('budgetProgress');
 
+    let items = [];
+
+    // Dark mode toggle
+    function loadDarkMode() {
+      if(localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark');
+      }
+    }
+    loadDarkMode();
+    darkModeToggle.onclick = () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+    };
+
+    // Budget question buttons
     document.getElementById('btnYes').onclick = () => {
       budgetQuestion.classList.add('hidden');
-      calculator.classList.remove('hidden');
-    };
-
-    document.getElementById('btnNo').onclick = () => {
-      budgetQuestion.classList.add('hidden');
-      budgetForm.classList.remove('hidden');
-    };
-
-    document.getElementById('btnCalcBudget').onclick = () => {
-      budgetResult.innerText = '';
-      const income = parseFloat(document.getElementById('monthlyIncome').value) || 0;
-      const essentials = parseFloat(document.getElementById('monthlyEssentials').value) || 0;
-      const savings = parseFloat(document.getElementById('targetSavings').value) || 0;
-      const emergencyFund = document.getElementById('emergencyFund').checked;
-
-      if(income <= 0) {
-        budgetResult.innerText = 'Please enter a valid monthly income.';
-        return;
-      }
-      if(essentials < 0 || savings < 0) {
-        budgetResult.innerText = 'Essentials and savings cannot be negative.';
-        return;
-      }
-
-      // Calculate leftover for wants
-      let leftover = income - essentials - savings;
-      if(!emergencyFund) {
-        leftover -= savings * 0.5; // assume half savings should be kept as emergency buffer if none exists
-      }
-
-      if(leftover <= 0) {
-        budgetResult.innerText = 'Your budget leaves no room for wants right now. Please adjust essentials or savings.';
-        return;
-      }
-
-      budgetResult.innerText = `You have ₱${leftover.toFixed(2)} left for wants like buying items.`;
-
-      // Show calculator next
-      calculator.classList.remove('hidden');
-      // Optional: prefill daily salary based on income / ~22 working days
-      const dailySalaryInput = document.getElementById('daily');
-      if(dailySalaryInput.value == '' || dailySalaryInput.value == '500') {
-        dailySalaryInput.value = (leftover / 22).toFixed(2);
-      }
-    };
-
-    document.getElementById('btnCalculate').onclick = () => {
-      result.innerText = '';
-      const daily = parseFloat(document.getElementById("daily").value) || 0;
-      const ot = parseFloat(document.getElementById("ot").value) || 0;
-      const price = parseFloat(document.getElementById("price").value) || 0;
-
-      const total = daily + ot;
-
-      if (total <= 0 || price <= 0) {
-        result.innerText = "Please enter valid values.";
-        return;
-      }
-
-      const daysExact = price / total;
-      const fullDays = Math.floor(daysExact);
-      const remainingFraction = daysExact - fullDays;
-
-      // 8-hour workday
-      const totalWorkSeconds = remainingFraction * 8 * 60 * 60;
-      const hours = Math.floor(totalWorkSeconds / 3600);
-      const minutes = Math.floor((totalWorkSeconds % 3600) / 60);
-      const seconds = Math.floor(totalWorkSeconds % 60);
-
-      result.innerText = `It will take ${fullDays} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds to afford it.`;
-    };
-  </script>
-</body>
-</html>
+      calculator.classList.remove
