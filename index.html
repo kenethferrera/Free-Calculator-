@@ -1,91 +1,169 @@
-<section class="max-w-3xl mx-auto p-6">
-  <h2 class="text-3xl font-bold mb-6 text-center">💡 Frequently Asked Questions</h2>
-
-  <div class="space-y-6">
-    <!-- WIN -->
-    <div>
-      <h3 class="text-xl font-semibold">💰 What happens if I win a game?</h3>
-      <p class="text-gray-700">You receive the payout listed for your tier (e.g., $10, $20, or $30) directly into your wallet. Payouts apply to Tiers 1–3 only.</p>
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buy Time Calculator</title>
+  <style>
+    :root {
+      --bg: #fff;
+      --text: #000;
+      --card: #f1f1f1;
+    }
+    body.dark {
+      --bg: #121212;
+      --text: #f9f9f9;
+      --card: #1f1f1f;
+    }
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+    .tabs {
+      display: flex;
+      background: var(--card);
+    }
+    .tabs button {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      background: var(--card);
+      color: var(--text);
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .tabs button.active {
+      background: #007bff;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+      padding: 20px;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .entry {
+      background: var(--card);
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .toggle {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="tabs">
+    <button class="tab-button active" onclick="showTab('calc')">Calculator</button>
+    <button class="tab-button" onclick="showTab('history')">Saved</button>
+    <button class="tab-button" onclick="showTab('settings')">Settings</button>
+  </div>  <div id="calc" class="tab-content active">
+    <h2>Buy Time Calculator</h2>
+    <input type="number" id="price" placeholder="Item Price (₱)">
+    <input type="number" id="salary" placeholder="Daily Salary (₱)">
+    <input type="number" id="ot" placeholder="OT per Day (optional)">
+    <input type="number" id="otDays" placeholder="OT Days (optional)">
+    <button onclick="calculate()">Calculate</button>
+    <div class="result" id="output"></div>
+  </div>  <div id="history" class="tab-content">
+    <h2>Saved Results</h2>
+    <div id="savedResults"></div>
+  </div>  <div id="settings" class="tab-content">
+    <h2>Settings</h2>
+    <div class="toggle">
+      <label>
+        <input type="checkbox" id="darkToggle"> Enable Dark Mode
+      </label>
     </div>
+  </div>  <script>
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+      if (tabId === 'history') loadSaved();
+    }
 
-    <!-- DRAW -->
-    <div>
-      <h3 class="text-xl font-semibold">🔄 What happens if I draw a game?</h3>
-      <p class="text-gray-700 mb-2">You’ll get <strong>1 game credit refunded</strong>, based on how you originally played the match:</p>
-      <ul class="list-disc list-inside text-gray-700">
-        <li><strong>Paid Credit:</strong> Refund is reusable or cashable.</li>
-        <li><strong>Ad-Earned Credit:</strong> Refund can only be reused for playing.</li>
-        <li><strong>Brutal Tier:</strong> No refunds (free tier).</li>
-      </ul>
-    </div>
+    function calculate() {
+      const price = parseFloat(document.getElementById('price').value) || 0;
+      const salary = parseFloat(document.getElementById('salary').value) || 0;
+      const ot = parseFloat(document.getElementById('ot').value) || 0;
+      const otDays = parseInt(document.getElementById('otDays').value) || 0;
 
-    <!-- CASHOUT -->
-    <div>
-      <h3 class="text-xl font-semibold">🤑 Can I cash out refunded credits?</h3>
-      <p class="text-gray-700">
-        <strong>Yes</strong>, if they were from <span class="font-semibold">paid games</span>.<br>
-        <strong>No</strong>, if from <span class="font-semibold">ad-earned games</span> — they’re play-only.
-      </p>
-    </div>
+      if (!price || !salary) {
+        document.getElementById('output').innerText = 'Enter valid item price and salary.';
+        return;
+      }
 
-    <!-- CREDIT TYPES -->
-    <div>
-      <h3 class="text-xl font-semibold">🎯 What’s the difference between paid and ad-earned credits?</h3>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse mt-2">
-          <thead>
-            <tr class="bg-gray-100">
-              <th class="py-2 px-4">Type</th>
-              <th class="py-2 px-4">Cost</th>
-              <th class="py-2 px-4">Refundable for Cash?</th>
-              <th class="py-2 px-4">Usable for Gameplay?</th>
-            </tr>
-          </thead>
-          <tbody class="text-gray-700">
-            <tr>
-              <td class="py-2 px-4 font-medium">💳 Paid Credit</td>
-              <td class="py-2 px-4">$0.20</td>
-              <td class="py-2 px-4">✅ Yes</td>
-              <td class="py-2 px-4">✅ Yes</td>
-            </tr>
-            <tr class="bg-gray-50">
-              <td class="py-2 px-4 font-medium">📺 Ad Credit</td>
-              <td class="py-2 px-4">Watch 1 ad</td>
-              <td class="py-2 px-4">❌ No</td>
-              <td class="py-2 px-4">✅ Yes</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      const totalOT = ot * otDays;
+      const totalWithOT = (salary * otDays) + totalOT;
+      const avgWithOT = otDays > 0 ? totalWithOT / otDays : 0;
 
-    <!-- AD LIMITS -->
-    <div>
-      <h3 class="text-xl font-semibold">🔁 Can I play unlimited games using ads?</h3>
-      <ul class="list-disc list-inside text-gray-700">
-        <li>⏳ 1 ad = 1 credit every 30 minutes</li>
-        <li>📅 Max 5 ads per day</li>
-        <li>🚫 Max 2 ad-earned games in a row (then you must play 1 paid game)</li>
-      </ul>
-    </div>
+      const daysWithOT = avgWithOT > 0 ? (price / avgWithOT).toFixed(2) : 'N/A';
+      const daysWithoutOT = (price / salary).toFixed(2);
 
-    <!-- LOSS -->
-    <div>
-      <h3 class="text-xl font-semibold">📉 What happens if I lose?</h3>
-      <p class="text-gray-700">No payout and no refund.</p>
-    </div>
+      const result = `Without OT: ${daysWithoutOT} day(s)` +
+        (avgWithOT > 0 ? `<br>With OT: ${daysWithOT} day(s)` : '');
 
-    <!-- DASHBOARD -->
-    <div>
-      <h3 class="text-xl font-semibold">📊 Can I track my stats and credits?</h3>
-      <p class="text-gray-700">Yes! Your dashboard shows:</p>
-      <ul class="list-disc list-inside text-gray-700">
-        <li>Total games played (by tier)</li>
-        <li>Win/Draw/Loss record</li>
-        <li>Wallet balance & earnings</li>
-        <li>Paid vs ad-earned credits</li>
-        <li>Ad usage history</li>
-      </ul>
-    </div>
-  </div>
-</section>
+      document.getElementById('output').innerHTML = result;
+
+      const entry = {
+        price, salary, ot, otDays,
+        result: result.replace(/<br>/g, ' | '),
+        timestamp: new Date().toLocaleString()
+      };
+      saveEntry(entry);
+    }
+
+    function saveEntry(entry) {
+      const data = JSON.parse(localStorage.getItem('buyTimeHistory') || '[]');
+      data.unshift(entry);
+      localStorage.setItem('buyTimeHistory', JSON.stringify(data.slice(0, 20)));
+    }
+
+    function loadSaved() {
+      const container = document.getElementById('savedResults');
+      container.innerHTML = '';
+      const data = JSON.parse(localStorage.getItem('buyTimeHistory') || '[]');
+      if (data.length === 0) {
+        container.innerHTML = '<p>No saved results.</p>';
+        return;
+      }
+      data.forEach(e => {
+        const div = document.createElement('div');
+        div.className = 'entry';
+        div.innerHTML = `<b>${e.timestamp}</b><br>${e.result}`;
+        container.appendChild(div);
+      });
+    }
+
+    // Dark mode toggle
+    const darkToggle = document.getElementById('darkToggle');
+    darkToggle.addEventListener('change', () => {
+      document.body.classList.toggle('dark', darkToggle.checked);
+      localStorage.setItem('darkMode', darkToggle.checked);
+    });
+
+    // Load dark mode on init
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark');
+      darkToggle.checked = true;
+    }
+  </script></body>
+</html>
