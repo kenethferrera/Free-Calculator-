@@ -71,8 +71,11 @@
   <a href="#" onclick="history.back(); return false;" class="back-btn">← Back</a>
   <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
   <div class="container">
-    <h2>BuyTime Calculator</h2><label>Daily Salary (for 8 hours):</label>
-<input type="number" id="dailySalary" placeholder="e.g. 810">
+    <h2>BuyTime Calculator</h2><label>Monthly Salary:</label>
+<input type="number" id="monthlySalary" placeholder="e.g. 18000">
+
+<label>Working Days per Month:</label>
+<input type="number" id="workingDays" placeholder="e.g. 22">
 
 <label>Overtime Pay (Optional):</label>
 <input type="number" id="overtimePay" placeholder="e.g. 200">
@@ -175,12 +178,15 @@
     }
 
     function calculateTotal() {
-      const dailySalary = parseFloat(document.getElementById('dailySalary').value);
+      const monthlySalary = parseFloat(document.getElementById('monthlySalary').value);
+      const workingDays = parseFloat(document.getElementById('workingDays').value);
       const overtimePay = parseFloat(document.getElementById('overtimePay').value) || 0;
 
-      if (isNaN(dailySalary) || dailySalary <= 0) return alert('Enter valid daily salary.');
-      if (items.length === 0) return alert('Add at least one item.');
+      if (isNaN(monthlySalary) || isNaN(workingDays) || workingDays <= 0) {
+        return alert('Enter valid monthly salary and working days.');
+      }
 
+      const dailySalary = monthlySalary / workingDays;
       const dailyExpenseTotal = expenses.reduce((sum, e) => sum + e.amount, 0);
       const totalCost = items.reduce((sum, item) => sum + item.price, 0);
       const totalIncome = dailySalary + overtimePay;
@@ -198,6 +204,7 @@
       const seconds = totalSeconds % 60;
 
       document.getElementById('result').innerHTML = `
+        <p>Daily Salary: ₱${dailySalary.toFixed(2)}</p>
         <p>Total Cost: ₱${totalCost.toFixed(2)}</p>
         <p>Total Daily Expenses: ₱${dailyExpenseTotal.toFixed(2)}</p>
         <p>Net Daily Savings: ₱${netAvailable.toFixed(2)}</p>
