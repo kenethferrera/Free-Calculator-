@@ -45,9 +45,20 @@
     .dark-mode th, .dark-mode td {
       border-color: #555;
     }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 10px;
+      background: #ccc;
+      color: #000;
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
+  <a href="#" onclick="history.back(); return false;" class="back-btn">← Back</a>
   <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
   <div class="container">
     <h2>BuyTime Calculator</h2>
