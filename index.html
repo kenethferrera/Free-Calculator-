@@ -1,51 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="./remix-ticket.css" />
-  </head>
-  <body>
-    <input type="checkbox" id="debug" />
-    <div class="group" style="perspective: 1500px">
-      <div class="ticket-container">
-        <div class="holographic-overlay">
-          <div class="bg-image"></div>
-          <div class="gradient-overlay"></div>
-          <div class="shine-overlay"></div>
-          <div class="glow-effect"></div>
-        </div>
-        <div class="ticket-image">
-          <img src="./general-CFnhvhhh.avif" width="800" height="280" alt="Remix Jam 2025 Event Ticket" />
-        </div>
-        <div class="ticket-details">
-          <div class="ticket-info">
-            <p>october 10 2025</p>
-            <div>
-              <p>your name</p>
-              <p>your company</p>
-            </div>
-            <p class="ticket-type">Early Bird</p>
-          </div>
-        </div>
-      </div>
+<head>
+  <meta charset="UTF-8">
+  <title>Text Zoom-In Parallax Reveal</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 200vh;
+      font-family: sans-serif;
+      background: #eee;
+      overflow-x: hidden;
+    }
+
+    .container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .card {
+      position: sticky;
+      top: 20vh;
+      width: 80%;
+      max-width: 500px;
+      aspect-ratio: 16/9;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .masked-text {
+      font-size: 4rem;
+      font-weight: bold;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') center/cover;
+      -webkit-background-clip: text;
+      color: transparent;
+      transition: transform 0.3s ease-out;
+      transform: scale(1);
+    }
+
+    .full-image {
+      position: absolute;
+      top: 20vh;
+      width: 80%;
+      max-width: 500px;
+      aspect-ratio: 16/9;
+      border-radius: 20px;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') center/cover;
+      opacity: 0;
+      transform: scale(1.1);
+      transition: opacity 0.5s ease-out, transform 0.6s ease-out;
+      z-index: 1;
+    }
+
+    /* Active states */
+    .masked-text.zoomed {
+      transform: scale(1.8);
+    }
+
+    .full-image.reveal {
+      opacity: 1;
+      transform: scale(1);
+      z-index: 3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="full-image" id="fullImage"></div>
+
+    <div class="card" id="card">
+      <div class="masked-text" id="maskedText">maldives</div>
     </div>
+  </div>
 
-    <script>
-      const container = document.querySelector(".ticket-container");
+  <script>
+    const text = document.getElementById('maskedText');
+    const image = document.getElementById('fullImage');
 
-      container.addEventListener("mousemove", (e) => {
-        const rect = container.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      const trigger = window.innerHeight * 0.3;
 
-        // Set CSS variables on the container
-        container.style.setProperty("--mouse-x", x);
-        container.style.setProperty("--mouse-y", y);
+      if (scrollY > trigger) {
+        text.classList.add('zoomed');
+        image.classList.add('reveal');
+      } else {
+        text.classList.remove('zoomed');
+        image.classList.remove('reveal');
+      }
+    });
+  </script>
 
-        console.log(`X: ${x.toFixed(2)}%, Y: ${y.toFixed(2)}%`);
-      });
-    </script>
-  </body>
+</body>
 </html>
