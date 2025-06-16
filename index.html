@@ -1,209 +1,51 @@
-<!DOCTYPE html><html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BuyTime Calculator</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.png" type="image/png">
-  <meta name="theme-color" content="#121212">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-    }
-    .dark-mode {
-      background-color: #121212;
-      color: #eee;
-    }
-    .container {
-      max-width: 500px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .dark-mode .container {
-      background: #1e1e1e;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 16px;
-    }
-    table {
-      width: 100%;
-      margin-top: 20px;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #ccc;
-      text-align: left;
-    }
-    .dark-mode th, .dark-mode td {
-      border-color: #555;
-    }
-    .back-btn {
-      display: inline-block;
-      margin-bottom: 10px;
-      background: #ccc;
-      color: #000;
-      text-align: center;
-      padding: 10px;
-      border-radius: 5px;
-      text-decoration: none;
-    }
-  </style>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js');
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./remix-ticket.css" />
+  </head>
+  <body>
+    <input type="checkbox" id="debug" />
+    <div class="group" style="perspective: 1500px">
+      <div class="ticket-container">
+        <div class="holographic-overlay">
+          <div class="bg-image"></div>
+          <div class="gradient-overlay"></div>
+          <div class="shine-overlay"></div>
+          <div class="glow-effect"></div>
+        </div>
+        <div class="ticket-image">
+          <img src="./general-CFnhvhhh.avif" width="800" height="280" alt="Remix Jam 2025 Event Ticket" />
+        </div>
+        <div class="ticket-details">
+          <div class="ticket-info">
+            <p>october 10 2025</p>
+            <div>
+              <p>your name</p>
+              <p>your company</p>
+            </div>
+            <p class="ticket-type">Early Bird</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const container = document.querySelector(".ticket-container");
+
+      container.addEventListener("mousemove", (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+        // Set CSS variables on the container
+        container.style.setProperty("--mouse-x", x);
+        container.style.setProperty("--mouse-y", y);
+
+        console.log(`X: ${x.toFixed(2)}%, Y: ${y.toFixed(2)}%`);
       });
-    }
-  </script>
-</head>
-<body>
-  <a href="#" onclick="history.back(); return false;" class="back-btn">← Back</a>
-  <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
-  <div class="container">
-    <h2>BuyTime Calculator</h2><label>Daily Salary (8 hrs work):</label>
-<input type="number" id="dailySalary" placeholder="e.g. 810">
-
-<label>Overtime Pay (Optional):</label>
-<input type="number" id="overtimePay" placeholder="e.g. 200">
-
-<label>Daily Budget (for essentials, bills, etc):</label>
-<input type="number" id="dailyBudget" placeholder="e.g. 400">
-
-<label>Item Name:</label>
-<input type="text" id="itemName" placeholder="e.g. Headphones">
-
-<label>Item Price:</label>
-<input type="number" id="itemPrice" placeholder="e.g. 2500">
-
-<button onclick="addItem()">Add Item</button>
-
-<table id="itemTable" style="display:none;">
-  <thead>
-    <tr><th>Item</th><th>Price</th><th>Remove</th></tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<h3>Daily Expenses</h3>
-<label>Expense Name:</label>
-<input type="text" id="expenseName" placeholder="e.g. Food">
-
-<label>Expense Amount:</label>
-<input type="number" id="expenseAmount" placeholder="e.g. 150">
-
-<button onclick="addExpense()">Add Expense</button>
-
-<table id="expenseTable" style="display:none;">
-  <thead>
-    <tr><th>Expense</th><th>Amount</th><th>Remove</th></tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<button onclick="calculateTotal()">Calculate Time Needed</button>
-<div id="result"></div>
-
-  </div>  <script>
-    const items = [];
-    const expenses = [];
-
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
-    }
-
-    function addItem() {
-      const name = document.getElementById('itemName').value;
-      const price = parseFloat(document.getElementById('itemPrice').value);
-      if (!name || isNaN(price)) return alert('Enter valid item name and price.');
-      items.push({ name, price });
-      document.getElementById('itemName').value = '';
-      document.getElementById('itemPrice').value = '';
-      updateItemTable();
-    }
-
-    function updateItemTable() {
-      const tbody = document.querySelector('#itemTable tbody');
-      tbody.innerHTML = '';
-      items.forEach((item, i) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${item.name}</td><td>₱${item.price}</td><td><button onclick="removeItem(${i})">X</button></td>`;
-        tbody.appendChild(row);
-      });
-      document.getElementById('itemTable').style.display = items.length ? 'table' : 'none';
-    }
-
-    function removeItem(index) {
-      items.splice(index, 1);
-      updateItemTable();
-    }
-
-    function addExpense() {
-      const name = document.getElementById('expenseName').value;
-      const amount = parseFloat(document.getElementById('expenseAmount').value);
-      if (!name || isNaN(amount)) return alert('Enter valid expense name and amount.');
-      expenses.push({ name, amount });
-      document.getElementById('expenseName').value = '';
-      document.getElementById('expenseAmount').value = '';
-      updateExpenseTable();
-    }
-
-    function updateExpenseTable() {
-      const tbody = document.querySelector('#expenseTable tbody');
-      tbody.innerHTML = '';
-      expenses.forEach((expense, i) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${expense.name}</td><td>₱${expense.amount}</td><td><button onclick="removeExpense(${i})">X</button></td>`;
-        tbody.appendChild(row);
-      });
-      document.getElementById('expenseTable').style.display = expenses.length ? 'table' : 'none';
-    }
-
-    function removeExpense(index) {
-      expenses.splice(index, 1);
-      updateExpenseTable();
-    }
-
-    function calculateTotal() {
-      const dailySalary = parseFloat(document.getElementById('dailySalary').value);
-      const overtimePay = parseFloat(document.getElementById('overtimePay').value) || 0;
-
-      if (isNaN(dailySalary)) {
-        return alert('Enter valid daily salary.');
-      }
-
-      const dailyExpenseTotal = expenses.reduce((sum, e) => sum + e.amount, 0);
-      const totalCost = items.reduce((sum, item) => sum + item.price, 0);
-      const totalIncome = dailySalary + overtimePay;
-      const netAvailable = totalIncome - dailyExpenseTotal;
-
-      if (netAvailable <= 0) return alert('Expenses exceed or equal income. Cannot save.');
-
-      const totalHoursPerDay = 8;
-      const daysNeeded = totalCost / netAvailable;
-      const totalSeconds = Math.floor(daysNeeded * totalHoursPerDay * 3600);
-
-      const days = Math.floor(totalSeconds / (3600 * totalHoursPerDay));
-      const hours = Math.floor((totalSeconds % (3600 * totalHoursPerDay)) / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-
-      document.getElementById('result').innerHTML = `
-        <p>Total Cost: ₱${totalCost.toFixed(2)}</p>
-        <p>Total Daily Expenses: ₱${dailyExpenseTotal.toFixed(2)}</p>
-        <p>Net Daily Savings: ₱${netAvailable.toFixed(2)}</p>
-        <p>Time Needed to Afford: <strong>${days} days, ${hours} hrs, ${minutes} mins, ${seconds} secs</strong></p>
-      `;
-    }
-  </script></body>
+    </script>
+  </body>
 </html>
